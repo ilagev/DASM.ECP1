@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -90,14 +92,45 @@ public class FicherosActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    /**
+     * Añade el menú con la opcion de vaciar el fichero
+     */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
 
+        menu.add(Menu.NONE, 1, Menu.NONE, R.string.opcionVaciar)
+                .setIcon(android.R.drawable.ic_menu_delete); // sólo visible android < 3.0
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 1:
+                borrarContenido();
+                break;
+        }
+
+        return true;
+    }
 
     /**
-     * TODO Vaciar el contenido del fichero y actualizar
+     * Vaciar el contenido del fichero, la línea de edición y actualizar
      *
      */
-//    public void borrarContenido() {
-//
-//    }
+    public void borrarContenido() {
+        try {  // Vaciar el fichero
+            FileOutputStream fos = openFileOutput(NOMBRE_FICHERO, Context.MODE_PRIVATE);
+            fos.close();
+            Log.i("FICHERO", "opción Limpiar -> VACIAR el fichero");
+            lineaTexto.setText(""); // limpio la linea de edición
+            mostrarContenido(contenidoFichero);
+        } catch (Exception e) {
+            Log.e("FILE I/O", "ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
 }

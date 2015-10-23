@@ -2,6 +2,7 @@
     <string name="app_name">Sesión 4: Ficheros</string>
 
     <string name="botónAñadir">Añadir</string>
+    <string name="opcionVaciar">Vaciar Fichero</string>
     <string name="hintTexto">Texto a añadir</string>
     <string name="txtOnStart">Pulsa para mostrar el contenido del fichero</string>
     <string name="txtFicheroVacio">El fichero está vacío</string>
