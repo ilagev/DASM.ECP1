@@ -1,7 +1,7 @@
 package es.upm.miw.ficheros;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -13,13 +13,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-
+import java.io.FileReader;
 
 public class FicherosActivity extends AppCompatActivity {
 
-    private static final String NOMBRE_FICHERO = "miFichero.txt";
+    private final String NOMBRE_FICHERO = "miFichero.txt";
+    private String RUTA_FICHERO;         /** SD card **/
     EditText lineaTexto;
     Button botonAniadir;
     TextView contenidoFichero;
@@ -40,22 +41,31 @@ public class FicherosActivity extends AppCompatActivity {
         lineaTexto       = (EditText) findViewById(R.id.textoIntroducido);
         botonAniadir     = (Button)   findViewById(R.id.botonAniadir);
         contenidoFichero = (TextView) findViewById(R.id.contenidoFichero);
+
+        /** SD card **/
+        // RUTA_FICHERO = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + NOMBRE_FICHERO;
+        RUTA_FICHERO = getExternalFilesDir(null) + "/" + NOMBRE_FICHERO;
     }
 
     /**
      * Al pulsar el botón añadir -> añadir al fichero.
-     * TODO Después de añadir -> mostrarContenido()
+     * Después de añadir -> mostrarContenido()
      *
      * @param v Botón añadir
      */
     public void accionAniadir(View v) {
+        /** Comprobar estado SD card **/
+        String estadoTarjetaSD = Environment.getExternalStorageState();
         try {  // Añadir al fichero
-            FileOutputStream fos = openFileOutput(NOMBRE_FICHERO, Context.MODE_APPEND);
-            fos.write(lineaTexto.getText().toString().getBytes());
-            fos.write('\n');
-            fos.close();
-            mostrarContenido(contenidoFichero);
-            Log.i("FICHERO", "Click botón Añadir -> AÑADIR al fichero");
+            if (estadoTarjetaSD.equals(Environment.MEDIA_MOUNTED)) {  /** SD card **/
+                // FileOutputStream fos = openFileOutput(NOMBRE_FICHERO, Context.MODE_APPEND);
+                FileOutputStream fos = new FileOutputStream(RUTA_FICHERO, true);
+                fos.write(lineaTexto.getText().toString().getBytes());
+                fos.write('\n');
+                fos.close();
+                mostrarContenido(contenidoFichero);
+                Log.i("FICHERO", "Click botón Añadir -> AÑADIR al fichero");
+            }
         } catch (Exception e) {
             Log.e("FILE I/O", "ERROR: " + e.getMessage());
             e.printStackTrace();
@@ -71,18 +81,22 @@ public class FicherosActivity extends AppCompatActivity {
      */
     public void mostrarContenido(View textviewContenidoFichero) {
         boolean hayContenido = false;
+        String estadoTarjetaSD = Environment.getExternalStorageState();
         try {
-            BufferedReader fin =
-                    new BufferedReader(new InputStreamReader(openFileInput(NOMBRE_FICHERO)));
-            contenidoFichero.setText("");
-            String linea = fin.readLine();
-            while (linea != null) {
-                hayContenido = true;
-                contenidoFichero.append(linea + '\n');
-                linea = fin.readLine();
+            if (estadoTarjetaSD.equals(Environment.MEDIA_MOUNTED)) { /** SD card **/
+                // BufferedReader fin =
+                //        new BufferedReader(new InputStreamReader(openFileInput(NOMBRE_FICHERO)));
+                BufferedReader fin = new BufferedReader(new FileReader(new File(RUTA_FICHERO)));
+                contenidoFichero.setText("");
+                String linea = fin.readLine();
+                while (linea != null) {
+                    hayContenido = true;
+                    contenidoFichero.append(linea + '\n');
+                    linea = fin.readLine();
+                }
+                fin.close();
+                Log.i("FICHERO", "Click contenido Fichero -> MOSTRAR fichero");
             }
-            fin.close();
-            Log.i("FICHERO", "Click contenido Fichero -> MOSTRAR fichero");
         } catch (Exception e) {
             Log.e("FILE I/O", "ERROR: " + e.getMessage());
             e.printStackTrace();
@@ -121,12 +135,16 @@ public class FicherosActivity extends AppCompatActivity {
      *
      */
     public void borrarContenido() {
+        String estadoTarjetaSD = Environment.getExternalStorageState();
         try {  // Vaciar el fichero
-            FileOutputStream fos = openFileOutput(NOMBRE_FICHERO, Context.MODE_PRIVATE);
-            fos.close();
-            Log.i("FICHERO", "opción Limpiar -> VACIAR el fichero");
-            lineaTexto.setText(""); // limpio la linea de edición
-            mostrarContenido(contenidoFichero);
+            if (estadoTarjetaSD.equals(Environment.MEDIA_MOUNTED)) { /** SD card **/
+                // FileOutputStream fos = openFileOutput(NOMBRE_FICHERO, Context.MODE_PRIVATE);
+                FileOutputStream fos = new FileOutputStream(RUTA_FICHERO);
+                fos.close();
+                Log.i("FICHERO", "opción Limpiar -> VACIAR el fichero");
+                lineaTexto.setText(""); // limpio la linea de edición
+                mostrarContenido(contenidoFichero);
+            }
         } catch (Exception e) {
             Log.e("FILE I/O", "ERROR: " + e.getMessage());
             e.printStackTrace();

@@ -6,5 +6,6 @@
     <string name="hintTexto">Texto a añadir</string>
     <string name="txtOnStart">Pulsa para mostrar el contenido del fichero</string>
     <string name="txtFicheroVacio">El fichero está vacío</string>
+    <string name="txtErrorEscribir">No puedo escribir en la memoria externa</string>
 
 </resources>
