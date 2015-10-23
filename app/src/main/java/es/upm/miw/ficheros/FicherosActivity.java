@@ -45,6 +45,7 @@ public class FicherosActivity extends AppCompatActivity {
         /** SD card **/
         // RUTA_FICHERO = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + NOMBRE_FICHERO;
         RUTA_FICHERO = getExternalFilesDir(null) + "/" + NOMBRE_FICHERO;
+
     }
 
     /**
@@ -113,8 +114,11 @@ public class FicherosActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        menu.add(Menu.NONE, 1, Menu.NONE, R.string.opcionVaciar)
-                .setIcon(android.R.drawable.ic_menu_delete); // sólo visible android < 3.0
+        //menu.add(Menu.NONE, 1, Menu.NONE, R.string.opcionVaciar)
+        //        .setIcon(android.R.drawable.ic_menu_delete); // sólo visible android < 3.0
+
+        // Inflador del menú: añade elementos a la action bar
+        getMenuInflater().inflate(R.menu.menu, menu);
 
         return true;
     }
@@ -122,7 +126,8 @@ public class FicherosActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case 1:
+            // case 1:
+            case R.id.accionVaciar:
                 borrarContenido();
                 break;
         }
