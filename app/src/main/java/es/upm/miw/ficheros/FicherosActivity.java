@@ -7,8 +7,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 
 
 public class FicherosActivity extends AppCompatActivity {
@@ -16,12 +20,13 @@ public class FicherosActivity extends AppCompatActivity {
     private static final String NOMBRE_FICHERO = "miFichero.txt";
     EditText lineaTexto;
     Button botonAniadir;
+    TextView contenidoFichero;
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        // TODO mostrarContenido(contenidoFichero);
+        mostrarContenido(contenidoFichero);
     }
 
     @Override
@@ -32,6 +37,7 @@ public class FicherosActivity extends AppCompatActivity {
 
         lineaTexto       = (EditText) findViewById(R.id.textoIntroducido);
         botonAniadir     = (Button)   findViewById(R.id.botonAniadir);
+        contenidoFichero = (TextView) findViewById(R.id.contenidoFichero);
     }
 
     /**
@@ -46,6 +52,7 @@ public class FicherosActivity extends AppCompatActivity {
             fos.write(lineaTexto.getText().toString().getBytes());
             fos.write('\n');
             fos.close();
+            mostrarContenido(contenidoFichero);
             Log.i("FICHERO", "Click botón Añadir -> AÑADIR al fichero");
         } catch (Exception e) {
             Log.e("FILE I/O", "ERROR: " + e.getMessage());
@@ -55,13 +62,35 @@ public class FicherosActivity extends AppCompatActivity {
     }
 
     /**
-     * TODO Se pulsa sobre el textview -> mostrar contenido del fichero
+     * Se pulsa sobre el textview -> mostrar contenido del fichero
+     * Si está vacío -> mostrar un Toast
      *
      * @param textviewContenidoFichero TextView contenido del fichero
      */
-//    public void mostrarContenido(View textviewContenidoFichero) {
-//
-//    }
+    public void mostrarContenido(View textviewContenidoFichero) {
+        boolean hayContenido = false;
+        try {
+            BufferedReader fin =
+                    new BufferedReader(new InputStreamReader(openFileInput(NOMBRE_FICHERO)));
+            contenidoFichero.setText("");
+            String linea = fin.readLine();
+            while (linea != null) {
+                hayContenido = true;
+                contenidoFichero.append(linea + '\n');
+                linea = fin.readLine();
+            }
+            fin.close();
+            Log.i("FICHERO", "Click contenido Fichero -> MOSTRAR fichero");
+        } catch (Exception e) {
+            Log.e("FILE I/O", "ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
+        if (!hayContenido) {
+            Toast.makeText(this, getString(R.string.txtFicheroVacio), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
     /**
      * TODO Vaciar el contenido del fichero y actualizar
