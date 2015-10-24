@@ -82,13 +82,15 @@ public class FicherosActivity extends AppCompatActivity {
      */
     public void mostrarContenido(View textviewContenidoFichero) {
         boolean hayContenido = false;
+        File fichero = new File(RUTA_FICHERO);
         String estadoTarjetaSD = Environment.getExternalStorageState();
+        contenidoFichero.setText("");
         try {
-            if (estadoTarjetaSD.equals(Environment.MEDIA_MOUNTED)) { /** SD card **/
+            if (fichero.exists() &&         /** SD card **/
+                    estadoTarjetaSD.equals(Environment.MEDIA_MOUNTED)) {
                 // BufferedReader fin =
                 //        new BufferedReader(new InputStreamReader(openFileInput(NOMBRE_FICHERO)));
                 BufferedReader fin = new BufferedReader(new FileReader(new File(RUTA_FICHERO)));
-                contenidoFichero.setText("");
                 String linea = fin.readLine();
                 while (linea != null) {
                     hayContenido = true;
