@@ -7,5 +7,6 @@
     <string name="txtOnStart">Pulsa para mostrar el contenido del fichero</string>
     <string name="txtFicheroVacio">El fichero está vacío</string>
     <string name="txtErrorEscribir">No puedo escribir en la memoria externa</string>
+    <string name="settings">Settings</string>
 
 </resources>

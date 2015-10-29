@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceScreen
+        android:title="Opciones de almacenamiento"
+        android:summary="Opciones relativas al almacenamiento de ficheros">
+
+        <CheckBoxPreference
+            android:key="almacenamiento_SD"
+            android:title="Almacenamiento en tarjeta SD"
+            android:summary="Si se activa esta opción se almacenará la información en la tarjeta SD">
+        </CheckBoxPreference>
+
+        <EditTextPreference
+            android:key="nombre_fichero"
+            android:title="Nombre del fichero"
+            android:summary="Nombre del fichero en el que se guardará la información">
+        </EditTextPreference>
+
+    </PreferenceScreen>
+
+</PreferenceScreen>
