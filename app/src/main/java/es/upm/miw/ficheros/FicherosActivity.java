@@ -1,8 +1,10 @@
 package es.upm.miw.ficheros;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -21,11 +23,10 @@ import java.io.FileReader;
 public class FicherosActivity extends AppCompatActivity {
 
     private final String NOMBRE_FICHERO = "miFichero.txt";
-    private String RUTA_FICHERO;         /** SD card **/
+    private String RUTA_FICHERO;
     EditText lineaTexto;
     Button botonAniadir;
     TextView contenidoFichero;
-
 
     @Override
     protected void onStart() {
@@ -43,24 +44,14 @@ public class FicherosActivity extends AppCompatActivity {
         botonAniadir     = (Button)   findViewById(R.id.botonAniadir);
         contenidoFichero = (TextView) findViewById(R.id.contenidoFichero);
 
-        /** SD card **/
-        // RUTA_FICHERO = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + NOMBRE_FICHERO;
         RUTA_FICHERO = getExternalFilesDir(null) + "/" + NOMBRE_FICHERO;
 
     }
 
-    /**
-     * Al pulsar el botón añadir -> añadir al fichero.
-     * Después de añadir -> mostrarContenido()
-     *
-     * @param v Botón añadir
-     */
     public void accionAniadir(View v) {
-        /** Comprobar estado SD card **/
         String estadoTarjetaSD = Environment.getExternalStorageState();
-        try {  // Añadir al fichero
+        try {
             if (estadoTarjetaSD.equals(Environment.MEDIA_MOUNTED)) {  /** SD card **/
-                // FileOutputStream fos = openFileOutput(NOMBRE_FICHERO, Context.MODE_APPEND);
                 FileOutputStream fos = new FileOutputStream(RUTA_FICHERO, true);
                 fos.write(lineaTexto.getText().toString().getBytes());
                 fos.write('\n');
@@ -72,25 +63,26 @@ public class FicherosActivity extends AppCompatActivity {
             Log.e("FILE I/O", "ERROR: " + e.getMessage());
             e.printStackTrace();
         }
-
     }
 
-    /**
-     * Se pulsa sobre el textview -> mostrar contenido del fichero
-     * Si está vacío -> mostrar un Toast
-     *
-     * @param textviewContenidoFichero TextView contenido del fichero
-     */
     public void mostrarContenido(View textviewContenidoFichero) {
+
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+
+        String fileName = sharedPrefs.getString("nombre_fichero", RUTA_FICHERO);
+
+        RUTA_FICHERO = sharedPrefs.getBoolean("almacenamiento_SD", true)
+                ? getExternalFilesDir(null)    + "/" + fileName
+                : getApplicationInfo().dataDir + "/" + fileName;
+
         boolean hayContenido = false;
         File fichero = new File(RUTA_FICHERO);
         String estadoTarjetaSD = Environment.getExternalStorageState();
         contenidoFichero.setText("");
+
         try {
-            if (fichero.exists() &&         /** SD card **/
-                    estadoTarjetaSD.equals(Environment.MEDIA_MOUNTED)) {
-                // BufferedReader fin =
-                //        new BufferedReader(new InputStreamReader(openFileInput(NOMBRE_FICHERO)));
+            if (fichero.exists() && estadoTarjetaSD.equals(Environment.MEDIA_MOUNTED)) {
                 BufferedReader fin = new BufferedReader(new FileReader(new File(RUTA_FICHERO)));
                 String linea = fin.readLine();
                 while (linea != null) {
@@ -111,25 +103,15 @@ public class FicherosActivity extends AppCompatActivity {
     }
 
     @Override
-    /**
-     * Añade el menú con la opcion de vaciar el fichero
-     */
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-
-        //menu.add(Menu.NONE, 1, Menu.NONE, R.string.opcionVaciar)
-        //        .setIcon(android.R.drawable.ic_menu_delete); // sólo visible android < 3.0
-
-        // Inflador del menú: añade elementos a la action bar
         getMenuInflater().inflate(R.menu.menu, menu);
-
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // case 1:
             case R.id.accionVaciar:
                 borrarContenido();
                 break;
@@ -141,15 +123,10 @@ public class FicherosActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * Vaciar el contenido del fichero, la línea de edición y actualizar
-     *
-     */
     public void borrarContenido() {
         String estadoTarjetaSD = Environment.getExternalStorageState();
-        try {  // Vaciar el fichero
-            if (estadoTarjetaSD.equals(Environment.MEDIA_MOUNTED)) { /** SD card **/
-                // FileOutputStream fos = openFileOutput(NOMBRE_FICHERO, Context.MODE_PRIVATE);
+        try {
+            if (estadoTarjetaSD.equals(Environment.MEDIA_MOUNTED)) {
                 FileOutputStream fos = new FileOutputStream(RUTA_FICHERO);
                 fos.close();
                 Log.i("FICHERO", "opción Limpiar -> VACIAR el fichero");
@@ -161,5 +138,4 @@ public class FicherosActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
 }

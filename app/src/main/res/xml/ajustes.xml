@@ -2,19 +2,22 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceScreen
-        android:title="Opciones de almacenamiento"
-        android:summary="Opciones relativas al almacenamiento de ficheros">
+        android:title="@string/ajustes_title"
+        android:summary="@string/ajustes_summary">
 
         <CheckBoxPreference
-            android:key="almacenamiento_SD"
-            android:title="Almacenamiento en tarjeta SD"
-            android:summary="Si se activa esta opción se almacenará la información en la tarjeta SD">
+            android:id="@+id/cbp_sd_storage"
+            android:key="@string/checkbox_SD_key"
+            android:title="@string/checkbox_SD_title"
+            android:summary="@string/checkbox_SD_summary">
         </CheckBoxPreference>
 
         <EditTextPreference
-            android:key="nombre_fichero"
-            android:title="Nombre del fichero"
-            android:summary="Nombre del fichero en el que se guardará la información">
+            android:id="@+id/etp_name_file"
+            android:key="@string/editText_key"
+            android:title="@string/editText_title"
+            android:summary="@string/editText_summary"
+            android:dialogTitle="@string/editText_dialogTitle">
         </EditTextPreference>
 
     </PreferenceScreen>
